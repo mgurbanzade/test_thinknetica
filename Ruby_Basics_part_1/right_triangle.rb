@@ -1,10 +1,12 @@
 puts "Поочередно укажите значения сторон треугольника:"
 
-sides = [gets.chomp.to_i, gets.chomp.to_i, gets.chomp.to_i]
+sides = [gets.chomp.to_f, gets.chomp.to_f, gets.chomp.to_f]
 sides = sides.sort
 
 if sides[0] == sides[1] && sides[0] == sides[2]
   puts "Треугольник не является прямоугольным. Он равнобедренный и равносторонний"
+
+  return
 end
 
 cathethus_a = sides[0]
@@ -16,7 +18,7 @@ if (cathethus_a ** 2 + cathethus_b ** 2) == hypotenuse ** 2
   puts "Треугольник является прямоугольным."
 
   if (cathethus_a == cathethus_b && 2 * (cathethus_a ** 2) == hypotenuse ** 2)
-    puts "Треугольник является прямоугольным и равнобедренным."
+    puts "Треугольник также является равнобедренным."
   end
 
 else
