@@ -15,8 +15,9 @@ hypotenuse = sides[2]
 if (cathethus_a ** 2 + cathethus_b ** 2) == hypotenuse ** 2
   puts "Треугольник является прямоугольным."
 
-elsif ((cathethus_a ** 2 + cathethus_b ** 2) * 2) == hypotenuse ** 2
-  puts "Треугольник является прямоугольным и равнобедренным."
+  if (cathethus_a == cathethus_b && 2 * (cathethus_a ** 2) == hypotenuse ** 2)
+    puts "Треугольник является прямоугольным и равнобедренным."
+  end
 
 else
   puts "Треугольник не является прямоугольным."
