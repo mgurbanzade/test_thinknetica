@@ -2,51 +2,36 @@ puts "День:"
 day = gets.chomp.to_i
 
 puts "Месяц:"
-month = gets.chomp.to_i
+input_month = gets.chomp.to_i
 
 puts "Год:"
 year = gets.chomp.to_i
 
-if day <= 0 || month <= 0 || year <= 0 || day > 31 || month > 12
+def isLeap y
+  ((y % 4 == 0) && (y % 100 != 0)) || (y % 400 == 0)
+end
+
+if day <= 0 || input_month <= 0 || year <= 0 || day > 31 || input_month > 12 ||
+  (!isLeap(year) && input_month == 2 && day > 28) || (isLeap(year) && input_month == 2 && day > 29)
+
   puts "Неверный формат. Попробуйте еще раз."
   return
 end
 
-def isLeap y
-  if ((y % 4 == 0) && (y % 100 != 0)) || (y % 400 == 0)
-    true
-  else
-    false
-  end
-end
+months = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
 
-months = {
-  1 => 31,
-  2 => 28,
-  3 => 31,
-  4 => 30,
-  5 => 31,
-  6 => 30,
-  7 => 31,
-  8 => 31,
-  9 => 30,
-  10 => 31,
-  11 => 30,
-  12 => 31
-}
+months[1] = 29 if isLeap year
 
-if isLeap year
-  months[2] = 29
-end
-
+month = 0
 days = 0
 
-months.each do |m, d|
-  if m < month
-    days += d
-  end
+while month < input_month - 1
+  days += months[month]
+  month += 1
 end
 
-result = "Порядковый номер даты составляет #{days += day}."
+days += day
+
+result = "Порядковый номер даты составляет #{days}."
 
 puts result

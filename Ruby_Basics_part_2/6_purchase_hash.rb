@@ -1,14 +1,11 @@
 check = {}
-item_total = {}
 total_sum = 0
 
 loop do
   puts "Название товара:"
   item_name = gets.chomp
 
-  if item_name.downcase == 'стоп' || item_name.downcase == 'stop'
-    break
-  end
+  break if item_name.downcase == 'стоп' || item_name.downcase == 'stop'
 
   puts "Цена товара:"
   item_price = gets.chomp.to_f
@@ -17,21 +14,15 @@ loop do
   item_quantity = gets.chomp.to_f
 
   check[item_name] = {
-    'Цена за ед.' => item_price,
-    'Кол-во купленного товара' => item_quantity
+    price: item_price,
+    quantity: item_quantity,
+    item_total: item_price * item_quantity
   }
 end
 
 check.each do |key, value|
-  item_total[key] = value['Цена за ед.'] * value['Кол-во купленного товара']
+  puts "Итоговая сумма за товар #{key}: #{value[:item_total]}."
+  total_sum += value[:item_total]
 end
 
-item_total.each do |key, value|
-  total_sum += value
-end
-
-puts "Итоговая сумма за товар: #{item_total}."
-puts "Общая сумма за все товары: #{total_sum}."
-
-
-
+puts "Общая сумма: #{total_sum}."

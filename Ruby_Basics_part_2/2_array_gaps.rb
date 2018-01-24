@@ -1,11 +1,11 @@
-start = 10
+current = 10
 step = 5
 finish = 100
-some_array = [10]
+some_array = [current]
 
-while start < finish do
-  start += step
-  some_array.push(start)
+while current < finish do
+  current += step
+  some_array.push(current)
 end
 
 puts some_array
