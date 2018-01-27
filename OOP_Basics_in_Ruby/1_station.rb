@@ -1,34 +1,24 @@
+require_relative '3_train'
+
 class Station
-  attr_reader :trains, :name
+  attr_reader :trains
 
   def initialize(name)
     @name = name
-    @trains = {}
+    @trains = []
   end
 
-  def train_arrival(name, type)
-    @trains[name] = type
+  def train_arrival(number, type, wagon)
+    trains << Train.new(number, type, wagon)
   end
 
-  def train_departure(name)
-    @trains.delete(name)
+  def train_departure(num)
+    trains.delete_if {|obj| obj.number == num}
   end
 
-  def names_list
-    names = []
-
-    @trains.each do |name, type|
-      names << name
-    end
-  end
-
-  def types_list
-    passenger = []
-    cargo = []
-
-    @trains.each do |name, type|
-      passenger << type if type == :passenger
-      cargo << type if type == :cargo
-    end
+  def train_types
+    passenger = trains.select {|train| train.type == :passenger}
+    cargo = trains.select {|train| train.type == :cargo}
+    puts "Пассажирских: #{passenger.count}, грузовых: #{cargo.count}."
   end
 end

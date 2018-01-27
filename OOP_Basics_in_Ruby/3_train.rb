@@ -1,7 +1,7 @@
-require_relative '1_routes.rb'
+require_relative '2_routes'
 
 class Train
-  attr_accessor :wagons, :speed, :route, :current_st, :prev_station, :next_station, :get_index
+  attr_accessor :wagons, :speed, :route, :current_station, :number, :type
 
   def initialize(number, type, wagons)
     @number = number
@@ -11,7 +11,7 @@ class Train
   end
 
   def accelerate(speed)
-    self.speed = speed
+    speed > 0 ? self.speed += speed : false
   end
 
   def stop
@@ -28,27 +28,27 @@ class Train
 
   def get_route
     @route = Route.new('Баку', 'Москва')
-    @route.build_station('Ростов-на-Дону')
-    self.current_st = @route.stations[0]
+    route.add_route('Ростов-на-Дону')
+    self.current_station = route.stations[0]
+  end
+
+  def get_index
+    route.stations.index(self.current_station)
   end
 
   def move_forward
-    get_index = @route.stations.index(self.current_st)
-    self.current_st = @route.stations[get_index + 1]
+    self.current_station != route.stations.last ? self.current_station = route.stations[get_index + 1] : false
   end
 
   def move_backward
-    get_index = @route.stations.index(self.current_st)
-    self.current_st = @route.stations[get_index - 1]
+    self.current_station != route.stations.first ? self.current_station = route.stations[get_index - 1] : false
   end
 
   def prev_station
-    get_index = @route.stations.index(self.current_st)
-    prev_station = @route.stations[get_index - 1]
+    prev_station = route.stations[get_index - 1]
   end
 
   def next_station
-    get_index = @route.stations.index(self.current_st)
-    next_station = @route.stations[get_index + 1]
+    next_station = route.stations[get_index + 1]
   end
 end

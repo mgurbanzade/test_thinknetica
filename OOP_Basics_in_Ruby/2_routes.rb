@@ -5,15 +5,15 @@ class Route
     @stations = [first, last]
   end
 
-  def build_station(station_name)
-    @stations.insert(-2, station_name)
+  def add_route(route_name)
+    stations.insert(-2, route_name)
   end
 
-  def demolish_station(station_name)
-    @stations.delete(station_name)
+  def remove_route(route_name)
+    stations.delete(route_name)
   end
 
   def show
-    @stations.join(', ')
+    stations.join(', ')
   end
 end
