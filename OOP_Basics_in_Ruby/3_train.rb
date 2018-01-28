@@ -26,7 +26,7 @@ class Train
   end
 
   def set_route(route)
-    self.route = route_name
+    self.route = route
     self.current_station = route.stations[0]
     self.current_station.train_arrival(self)
   end
