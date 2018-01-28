@@ -25,7 +25,7 @@ class Train
     self.speed == 0 && self.wagons > 0 ? self.wagons -= 1 : false
   end
 
-  def set_route(route_name)
+  def set_route(route)
     self.route = route_name
     self.current_station = route.stations[0]
     self.current_station.train_arrival(self)
@@ -36,7 +36,7 @@ class Train
   end
 
   def move_next_station
-    return nil if route == nil
+    return nil unless route
     if self.current_station != route.stations.last
       self.current_station.train_departure(self)
       self.current_station = route.stations[station_index + 1]
@@ -45,7 +45,7 @@ class Train
   end
 
   def move_previous_station
-    return nil if route == nil
+    return nil unless route
     if self.current_station != route.stations.first
       self.current_station.train_departure(self)
       self.current_station = route.stations[station_index - 1]
@@ -54,12 +54,12 @@ class Train
   end
 
   def previous_station
-    return nil if route == nil
+    return nil unless route
     self.current_station != route.stations.first ? route.stations[station_index - 1] : nil
   end
 
   def next_station
-    return nil if route == nil
+    return nil unless route
     self.current_station != route.stations.last ? route.stations[station_index + 1] : nil
   end
 end
