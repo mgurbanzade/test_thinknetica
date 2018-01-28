@@ -12,8 +12,4 @@ class Route
   def remove_station(station)
     stations.delete(station)
   end
-
-  def show_stations
-    stations
-  end
 end

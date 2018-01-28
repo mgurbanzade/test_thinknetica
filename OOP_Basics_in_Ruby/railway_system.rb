@@ -82,6 +82,3 @@ maglev.current_station
 maglev.prev_station(baku_moscow)
 maglev.current_station
 maglev.next_station(baku_moscow)
-
-
-
