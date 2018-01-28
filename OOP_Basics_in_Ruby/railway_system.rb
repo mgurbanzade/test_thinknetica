@@ -5,7 +5,6 @@ require_relative '3_train'
 baku = Station.new('Бакинский Вокзал')
 moscow = Station.new('Московский Вокзал')
 rostov = Station.new('Ростов-Главный')
-voronezh = Station.new('Воронеж I')
 
 baku_moscow = Route.new(baku, moscow)
 baku_moscow.add_station(rostov)
