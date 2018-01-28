@@ -1,6 +1,6 @@
 class Train
-  attr_reader :type, :number
-  attr_accessor :wagons, :speed, :current_station, :route
+  attr_reader :type, :number, :current_station
+  attr_accessor :wagons, :speed, :route, :station_index
 
   def initialize(number, type, wagons)
     @number = number
@@ -13,8 +13,8 @@ class Train
     amount > 0 ? self.speed += amount : false
   end
 
-  def stop
-    self.speed = 0
+  def decelerate(amount)
+    amount <= speed && amount > 0 ? self.speed -= amount : false
   end
 
   def attach_wagon
@@ -26,40 +26,40 @@ class Train
   end
 
   def set_route(route)
-    self.route = route
-    self.current_station = route.stations[0]
-    self.current_station.train_arrival(self)
+    @route = route
+    @station_index = 0
+    route.stations[station_index].train_arrival(self)
   end
 
-  def station_index
-    route.stations.index(self.current_station)
+  def current_station
+    route.stations[station_index]
   end
 
   def move_next_station
     return nil unless route
-    if self.current_station != route.stations.last
-      self.current_station.train_departure(self)
-      self.current_station = route.stations[station_index + 1]
-      self.current_station.train_arrival(self)
+    if route.stations[station_index] != route.stations.last
+      route.stations[station_index].train_departure(self)
+      self.station_index += 1
+      route.stations[station_index].train_arrival(self)
     end
   end
 
   def move_previous_station
     return nil unless route
-    if self.current_station != route.stations.first
-      self.current_station.train_departure(self)
-      self.current_station = route.stations[station_index - 1]
-      self.current_station.train_arrival(self)
+    if route.stations[station_index] != route.stations.first
+      route.stations[station_index].train_departure(self)
+      station_index -= 1
+      route.stations[station_index].train_arrival(self)
     end
   end
 
   def previous_station
     return nil unless route
-    self.current_station != route.stations.first ? route.stations[station_index - 1] : nil
+    route.stations[station_index] != route.stations.first ? route.stations[station_index - 1] : nil
   end
 
   def next_station
     return nil unless route
-    self.current_station != route.stations.last ? route.stations[station_index + 1] : nil
+    route.stations[station_index] != route.stations.last ? route.stations[station_index + 1] : nil
   end
 end
