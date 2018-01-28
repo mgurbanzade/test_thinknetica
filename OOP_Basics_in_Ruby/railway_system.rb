@@ -10,7 +10,6 @@ baku_moscow = Route.new(baku, moscow)
 baku_moscow.add_station(rostov)
 
 maglev = Train.new(1, 'пассажирский', 15)
-maglev.get_route(baku_moscow)
 
 #STATION
 
@@ -24,7 +23,7 @@ rostov.train_arrival(maglev)
 rostov.trains
 
 #Может возвращать список поездов на станции по типу (см. ниже): кол-во грузовых, пассажирских
-rostov.train_types
+rostov.train_types('пассажирский')
 
 #Может отправлять поезда (по одному за раз, при этом, поезд удаляется из списка поездов, находящихся на станции).
 rostov.train_departure(maglev)
@@ -74,10 +73,10 @@ maglev.detach_wagon
 maglev.current_station
 
 #Может перемещаться между станциями, указанными в маршруте. Перемещение возможно вперед и назад, но только на 1 станцию за раз.
-#maglev.move_forward(baku_moscow)
-#maglev.move_backward(baku_moscow)
+#maglev.move_next_station
+#maglev.move_previous_station
 
 #Возвращать предыдущую станцию, текущую, следующую, на основе маршрута
-maglev.prev_station(baku_moscow)
+maglev.previous_station
 maglev.current_station
-maglev.next_station(baku_moscow)
+maglev.next_station

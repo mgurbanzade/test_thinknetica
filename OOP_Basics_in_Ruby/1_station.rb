@@ -7,16 +7,14 @@ class Station
   end
 
   def train_arrival(train)
-    trains << train
+    self.trains << train
   end
 
   def train_departure(train)
     trains.delete(train)
   end
 
-  def train_types
-    passenger = trains.select {|train| train.type == "пассажирский"}
-    cargo = trains.select {|train| train.type == "грузовой"}
-    return "#{passenger.count} пассажирских, и #{cargo.count} грузовых"
+  def train_types(type)
+    trains.count { |train| train.type == type }
   end
 end

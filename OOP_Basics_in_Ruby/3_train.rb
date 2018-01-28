@@ -1,6 +1,6 @@
 class Train
-  attr_reader :type
-  attr_accessor :wagons, :speed, :current_station, :number
+  attr_reader :type, :number
+  attr_accessor :wagons, :speed, :current_station, :route
 
   def initialize(number, type, wagons)
     @number = number
@@ -22,39 +22,44 @@ class Train
   end
 
   def detach_wagon
-    self.speed == 0 ? self.wagons -= 1 : false
+    self.speed == 0 && self.wagons > 0 ? self.wagons -= 1 : false
   end
 
-  def get_route(route)
+  def set_route(route_name)
+    self.route = route_name
     self.current_station = route.stations[0]
     self.current_station.train_arrival(self)
   end
 
-  def get_index(route)
+  def station_index
     route.stations.index(self.current_station)
   end
 
-  def move_forward(route)
+  def move_next_station
+    return nil if route == nil
     if self.current_station != route.stations.last
       self.current_station.train_departure(self)
-      self.current_station = route.stations[get_index(route) + 1]
+      self.current_station = route.stations[station_index + 1]
       self.current_station.train_arrival(self)
     end
   end
 
-  def move_backward(route)
+  def move_previous_station
+    return nil if route == nil
     if self.current_station != route.stations.first
       self.current_station.train_departure(self)
-      self.current_station = route.stations[get_index(route) - 1]
+      self.current_station = route.stations[station_index - 1]
       self.current_station.train_arrival(self)
     end
   end
 
-  def prev_station(route)
-    self.current_station != route.stations.first ? prev_station = route.stations[get_index(route) - 1] : nil
+  def previous_station
+    return nil if route == nil
+    self.current_station != route.stations.first ? route.stations[station_index - 1] : nil
   end
 
-  def next_station(route)
-    self.current_station != route.stations.last ? next_station = route.stations[get_index(route) + 1] : nil
+  def next_station
+    return nil if route == nil
+    self.current_station != route.stations.last ? route.stations[station_index + 1] : nil
   end
 end
