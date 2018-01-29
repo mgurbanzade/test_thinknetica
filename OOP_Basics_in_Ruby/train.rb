@@ -27,7 +27,7 @@ class Train
   def set_route(route)
     @route = route
     @station_index = 0
-    route.stations[@station_index].train_arrival(self)
+    current_station.train_arrival(self)
   end
 
   def current_station

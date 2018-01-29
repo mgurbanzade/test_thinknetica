@@ -1,6 +1,6 @@
-require_relative '1_station'
-require_relative '2_routes'
-require_relative '3_train'
+require_relative 'station'
+require_relative 'routes'
+require_relative 'train'
 
 baku = Station.new('Бакинский Вокзал')
 moscow = Station.new('Московский Вокзал')
