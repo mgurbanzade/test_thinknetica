@@ -1,10 +1,8 @@
 class PassengerWagon
-
-  attr_reader :TYPE
+  attr_reader :type
 
   def initialize
-    @TYPE = :passenger
+    @type = :passenger
     @seats = 50
   end
-
 end

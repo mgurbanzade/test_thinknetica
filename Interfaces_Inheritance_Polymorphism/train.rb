@@ -8,19 +8,19 @@ class Train
   end
 
   def accelerate(amount)
-    amount > 0 ? self.speed += amount : false
+    speed += amount if amount > 0
   end
 
   def decelerate(amount)
-    amount <= speed && amount > 0 ? self.speed -= amount : false
+    speed -= amount if amount <= speed && amount > 0
   end
 
   def attach_wagon(wagon)
-    self.speed == 0 && wagon.TYPE == self.TYPE ? self.wagons << wagon : false
+    wagons << wagon if speed == 0 && wagon.type == type
   end
 
   def detach_wagon
-    self.speed == 0 && self.wagons.count > 0 ? self.wagons.pop : false
+    wagons.pop if speed == 0 && wagons.count > 0
   end
 
   def set_route(route)
@@ -34,7 +34,7 @@ class Train
   end
 
   def move_next_station
-    return nil unless route
+    return unless route
     if current_station != route.stations.last
       current_station.train_departure(self)
       @station_index += 1
@@ -43,7 +43,7 @@ class Train
   end
 
   def move_previous_station
-    return nil unless route
+    return unless route
     if current_station != route.stations.first
       current_station.train_departure(self)
       @station_index -= 1
@@ -52,12 +52,12 @@ class Train
   end
 
   def previous_station
-    return nil unless route
+    return unless route
     @station_index != 0 ? route.stations[@station_index - 1] : false
   end
 
   def next_station
-    return nil unless route
+    return unless route
     route.stations[@station_index + 1]
   end
 end

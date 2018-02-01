@@ -19,7 +19,7 @@ class Main
     puts "Придумайте название для станции:"
     u_station_name = gets.chomp
 
-    self.user_stations << Station.new(u_station_name)
+    user_stations << Station.new(u_station_name)
 
     puts "Создана станция #{u_station_name}"
   end
@@ -36,8 +36,8 @@ class Main
     puts "Номер поезда?"
     user_train_number = gets.chomp.to_i
 
-    if self.user_trains.count >= 1
-      self.user_trains.each do |train|
+    if user_trains.count >= 1
+      user_trains.find do |train|
         if train.number == user_train_number
           puts "Поезд с номером #{user_train_number} уже существует. Введите другой номер"
           return
@@ -46,11 +46,11 @@ class Main
     end
 
     if user_train_type.downcase == 'пассажирский'
-      self.user_trains << PassengerTrain.new(user_train_number)
+      user_trains << PassengerTrain.new(user_train_number)
       puts "Пассажирский поезд с номером #{user_train_number} был успешно создан."
 
     elsif user_train_type.downcase == 'грузовой'
-      self.user_trains << CargoTrain.new(user_train_number)
+      user_trains << CargoTrain.new(user_train_number)
       puts "Грузовой поезд с номером #{user_train_number} был успешно создан."
     end
   end
@@ -63,7 +63,7 @@ class Main
     puts "Введите название конечной станции:"
     user_last_station = gets.chomp
 
-    self.user_stations.each do |station|
+    user_stations.each do |station|
       if station.name == user_first_station
         user_first_station = station
       elsif station.name == user_last_station
@@ -71,8 +71,7 @@ class Main
       end
     end
 
-    self.user_routes << Route.new(user_first_station, user_last_station)
-
+    user_routes << Route.new(user_first_station, user_last_station)
     puts "Маршрут #{user_first_station.name} - #{user_last_station.name} успешно создан."
   end
 
@@ -82,12 +81,12 @@ class Main
     puts "Введите название маршрута:"
     user_route_name = gets.chomp
 
-    self.user_routes.each do |route|
+    user_routes.find do |route|
       if route.name == user_route_name
         puts "Список станций которых можно добавить в маршрут:"
 
-        self.user_stations.each do |station|
-          if station != route.stations.first && station != route.stations.last
+        user_stations.find do |station|
+          if !route.stations.include?(station)
             puts station.name
           end
         end
@@ -95,7 +94,7 @@ class Main
         puts "Введите название станции"
         user_add_station_route = gets.chomp
 
-        self.user_stations.each do |station|
+        user_stations.find do |station|
           if station.name == user_add_station_route
             route.add_station(station)
             puts "Станция #{station.name} добавлена в маршрут #{route.name}"
@@ -111,18 +110,20 @@ class Main
     puts "Введите название маршрута:"
     user_route_name = gets.chomp
 
-    self.user_routes.each do |route|
+    user_routes.find do |route|
       if route.name == user_route_name
         puts "Список станций которых можно удалить из маршрута:"
 
-        route.stations.each do |station|
-          puts station.name if station != route.stations.first && station != route.stations.last
+        route.stations.find do |station|
+          if station != route.stations.first && station != route.stations.last
+            puts station.name
+          end
         end
 
         puts "Введите название станции"
         user_add_station_route = gets.chomp
 
-        self.user_stations.each do |station|
+        user_stations.find do |station|
           if station.name == user_add_station_route
             puts "Станция #{station.name} удалена из маршрута #{route.name}"
             route.remove_station(station)
@@ -133,19 +134,28 @@ class Main
   end
 
   def train_set_route
+    available_trains = []
     puts "Список созданных маршрутов:"
     puts routes_list
     puts "Введите название маршрута:"
     user_route_name = gets.chomp
 
-    self.user_routes.each do |route|
+    user_routes.find do |route|
       if route.name == user_route_name
-        puts "Список поездов:"
-        puts trains_list
+        puts "Список поездов доступных поездов:"
+
+        user_trains.each do |train|
+          if train.route == nil
+            available_trains << "Поезд номер #{train.number}"
+          end
+        end
+
+        puts available_trains.join(', ')
+
         puts "Введите номер поезда"
         user_train_number = gets.chomp.to_i
 
-        self.user_trains.each do |train|
+        user_trains.find do |train|
           if train.number == user_train_number
             train.set_route(route)
             puts "Для поезда номер #{train.number} был назначен маршрут #{route.name}"
@@ -161,12 +171,12 @@ class Main
     puts "Введите номер поезда"
     user_train_number = gets.chomp.to_i
 
-    self.user_trains.each do |train|
+    user_trains.find do |train|
       if train.number == user_train_number
-        if train.TYPE == :passenger
+        if train.type == :passenger
           train.attach_wagon(PassengerWagon.new)
           puts "К поезду с номером #{train.number} был добавлен новый вагон. Теперь у поезда #{train.wagons.count} вагон(ов)"
-        elsif train.TYPE == :cargo
+        elsif train.type == :cargo
           train.attach_wagon(CargoWagon.new)
           puts "К поезду с номером #{train.number} был добавлен новый вагон. Теперь у поезда #{train.wagons.count} вагон(ов)"
         end
@@ -180,7 +190,7 @@ class Main
     puts "Введите номер поезда"
     user_train_number = gets.chomp.to_i
 
-    self.user_trains.each do |train|
+    user_trains.find do |train|
       if train.number == user_train_number
         train.detach_wagon
         puts "От поезда с номером #{train.number} был отцеплен один вагон. Теперь у поезда #{train.wagons.count} вагон(ов)"
@@ -194,7 +204,7 @@ class Main
     puts "Введите номер поезда"
     user_train_number = gets.chomp.to_i
 
-    self.user_trains.each do |train|
+    user_trains.find do |train|
       if train.number == user_train_number
         train.move_next_station
         puts "Поезд прибыл на станцию #{train.current_station.name}"
@@ -208,7 +218,7 @@ class Main
     puts "Введите номер поезда"
     user_train_number = gets.chomp.to_i
 
-    self.user_trains.each do |train|
+    user_trains.find do |train|
       if train.number == user_train_number
         train.move_previous_station
         puts "Поезд прибыл на станцию #{train.current_station.name}"
@@ -227,10 +237,10 @@ class Main
     puts "Введите название станции"
     user_station_name = gets.chomp
 
-    self.user_stations.each do |station|
+    user_stations.each do |station|
       if station.name == user_station_name
         station.trains.each do |train|
-          trains_on_station << "Поезд номер #{train.number}"
+          trains_on_station << "Поезд № #{train.number}"
         end
       end
     end
@@ -238,11 +248,11 @@ class Main
     puts trains_on_station.join(', ')
   end
 
-  protected
+  private
 
   def station_names_list
     st_list = []
-    self.user_stations.each do |station|
+    user_stations.each do |station|
       st_list << station.name
     end
 
@@ -251,7 +261,7 @@ class Main
 
   def routes_list
     rt_list = []
-    self.user_routes.each do |route|
+    user_routes.each do |route|
       rt_list << route.name
     end
 
@@ -261,7 +271,7 @@ class Main
   def trains_list
     tr_list = []
 
-    self.user_trains.each do |train|
+    user_trains.each do |train|
       tr_list << "Поезд № #{train.number}"
     end
 

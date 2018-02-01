@@ -7,7 +7,7 @@ class Station
   end
 
   def train_arrival(train)
-    self.trains << train
+    trains << train
   end
 
   def train_departure(train)
