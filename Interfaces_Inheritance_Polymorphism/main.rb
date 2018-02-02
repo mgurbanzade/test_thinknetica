@@ -4,6 +4,7 @@ require_relative 'passenger_wagon'
 require_relative 'cargo_wagon'
 require_relative 'station'
 require_relative 'routes'
+require_relative 'outputs'
 
 class Main
 
@@ -16,51 +17,42 @@ class Main
   end
 
   def create_station
-    puts "Придумайте название для станции:"
+    puts OUTPUTS[:station_name]
     u_station_name = gets.chomp
-
     user_stations << Station.new(u_station_name)
-
-    puts "Создана станция #{u_station_name}"
+    puts OUTPUTS[:station_created] + u_station_name
   end
 
   def create_train
-    puts "Грузовой или пассажирский?"
-    user_train_type = gets.chomp
+    puts OUTPUTS[:train_type]
+    user_train_type = gets.chomp.downcase
 
-    if user_train_type.downcase != "грузовой" && user_train_type.downcase != "пассажирский"
-      puts "Поездов такого типа не сущетсвует. Повторите попытку"
-      return
-    end
+    return puts OUTPUTS[:no_type] unless PERMITTED_TYPES.include?(user_train_type)
 
-    puts "Номер поезда?"
+    puts OUTPUTS[:train_number]
     user_train_number = gets.chomp.to_i
 
-    if user_trains.count >= 1
-      user_trains.find do |train|
-        if train.number == user_train_number
-          puts "Поезд с номером #{user_train_number} уже существует. Введите другой номер"
-          return
-        end
-      end
+    if user_trains.size >= 1
+      choosed_train = choose_train(user_trains, user_train_number)
+      return puts OUTPUTS[:train_exists] unless choosed_train.nil?
     end
 
-    if user_train_type.downcase == 'пассажирский'
+    if user_train_type == PERMITTED_TYPES[1]
       user_trains << PassengerTrain.new(user_train_number)
-      puts "Пассажирский поезд с номером #{user_train_number} был успешно создан."
+      puts OUTPUTS[:pass_train_created]
 
-    elsif user_train_type.downcase == 'грузовой'
+    elsif user_train_type == PERMITTED_TYPES[0]
       user_trains << CargoTrain.new(user_train_number)
-      puts "Грузовой поезд с номером #{user_train_number} был успешно создан."
+      puts OUTPUTS[:cargo_train_created]
     end
   end
 
   def create_route
-    puts "Список станций:"
-    puts station_names_list
-    puts "Введите название начальной станции:"
+    puts OUTPUTS[:stations_list]
+    puts list_names(user_stations)
+    puts OUTPUTS[:first_station_name]
     user_first_station = gets.chomp
-    puts "Введите название конечной станции:"
+    puts OUTPUTS[:last_station_name]
     user_last_station = gets.chomp
 
     user_stations.each do |station|
@@ -72,209 +64,177 @@ class Main
     end
 
     user_routes << Route.new(user_first_station, user_last_station)
-    puts "Маршрут #{user_first_station.name} - #{user_last_station.name} успешно создан."
+    puts OUTPUTS[:route_created]
   end
 
   def route_add_station
-    puts "Список созданных маршрутов:"
-    puts routes_list
-    puts "Введите название маршрута:"
+    puts OUTPUTS[:created_routes]
+    puts list_names(user_routes)
+    puts OUTPUTS[:type_route_name]
     user_route_name = gets.chomp
 
     user_routes.find do |route|
       if route.name == user_route_name
-        puts "Список станций которых можно добавить в маршрут:"
+        puts OUTPUTS[:available_stations]
 
         user_stations.find do |station|
-          if !route.stations.include?(station)
-            puts station.name
-          end
+          puts station.name if !route.stations.include?(station)
         end
 
-        puts "Введите название станции"
+        puts OUTPUTS[:type_station_name]
         user_add_station_route = gets.chomp
 
-        user_stations.find do |station|
-          if station.name == user_add_station_route
-            route.add_station(station)
-            puts "Станция #{station.name} добавлена в маршрут #{route.name}"
-          end
-        end
+        available_station = choose_station(user_stations, user_add_station_route)
+        route.add_station(available_station) unless available_station.nil?
+        puts OUTPUTS[:station_added]
       end
     end
   end
 
   def route_remove_station
-    puts "Список созданных маршрутов:"
-    puts routes_list
-    puts "Введите название маршрута:"
+    puts OUTPUTS[:created_routes]
+    puts list_names(user_routes)
+    puts OUTPUTS[:type_route_name]
     user_route_name = gets.chomp
 
     user_routes.find do |route|
       if route.name == user_route_name
-        puts "Список станций которых можно удалить из маршрута:"
+        puts OUTPUTS[:removable_stations]
 
         route.stations.find do |station|
-          if station != route.stations.first && station != route.stations.last
-            puts station.name
-          end
+          puts station.name if station != route.stations.first && station != route.stations.last
         end
 
-        puts "Введите название станции"
-        user_add_station_route = gets.chomp
+        puts OUTPUTS[:type_station_name]
+        user_remove_station_route = gets.chomp
 
-        user_stations.find do |station|
-          if station.name == user_add_station_route
-            puts "Станция #{station.name} удалена из маршрута #{route.name}"
-            route.remove_station(station)
-          end
-        end
+        removable_station = choose_station(user_stations, user_remove_station_route)
+        puts OUTPUTS[:station_deleted]
+        route.remove_station(removable_station)
       end
     end
   end
 
   def train_set_route
     available_trains = []
-    puts "Список созданных маршрутов:"
-    puts routes_list
-    puts "Введите название маршрута:"
+    puts OUTPUTS[:created_routes]
+    puts list_names(user_routes)
+    puts OUTPUTS[:type_route_name]
     user_route_name = gets.chomp
 
     user_routes.find do |route|
       if route.name == user_route_name
-        puts "Список поездов доступных поездов:"
+        puts OUTPUTS[:available_trains]
 
         user_trains.each do |train|
-          if train.route == nil
-            available_trains << "Поезд номер #{train.number}"
-          end
+          available_trains << "Поезд № #{train.number}" if train.route.nil?
         end
 
         puts available_trains.join(', ')
 
-        puts "Введите номер поезда"
+        puts OUTPUTS[:train_number]
         user_train_number = gets.chomp.to_i
 
-        user_trains.find do |train|
-          if train.number == user_train_number
-            train.set_route(route)
-            puts "Для поезда номер #{train.number} был назначен маршрут #{route.name}"
-          end
-        end
+        choosed_train = choose_train(user_trains, user_train_number)
+        choosed_train.set_route(route)
+        puts OUTPUTS[:route_assigned]
       end
     end
   end
 
   def train_attach_wagon
-    puts "Список поездов:"
+    puts OUTPUTS[:available_trains]
     puts trains_list
-    puts "Введите номер поезда"
+    puts OUTPUTS[:train_number]
     user_train_number = gets.chomp.to_i
 
-    user_trains.find do |train|
-      if train.number == user_train_number
-        if train.type == :passenger
-          train.attach_wagon(PassengerWagon.new)
-          puts "К поезду с номером #{train.number} был добавлен новый вагон. Теперь у поезда #{train.wagons.count} вагон(ов)"
-        elsif train.type == :cargo
-          train.attach_wagon(CargoWagon.new)
-          puts "К поезду с номером #{train.number} был добавлен новый вагон. Теперь у поезда #{train.wagons.count} вагон(ов)"
-        end
-      end
-    end
+    choosed_train = choose_train(user_trains, user_train_number)
+    choosed_train.attach_wagon(PassengerWagon.new) if choosed_train.type == :passenger
+    choosed_train.attach_wagon(CargoWagon.new) if choosed_train.type == :cargo
+    puts OUTPUTS[:wagon_added] unless choosed_train.nil?
   end
 
   def train_detach_wagon
-    puts "Список поездов:"
+    puts OUTPUTS[:available_trains]
     puts trains_list
-    puts "Введите номер поезда"
+    puts OUTPUTS[:train_number]
     user_train_number = gets.chomp.to_i
 
-    user_trains.find do |train|
-      if train.number == user_train_number
-        train.detach_wagon
-        puts "От поезда с номером #{train.number} был отцеплен один вагон. Теперь у поезда #{train.wagons.count} вагон(ов)"
-      end
-    end
+    choosed_train = choose_train(user_trains, user_train_number)
+    choosed_train.detach_wagon
+    puts OUTPUTS[:wagon_detached] unless choosed_train.nil?
   end
 
   def train_move_forward
-    puts "Список поездов:"
+    puts OUTPUTS[:available_trains]
     puts trains_list
-    puts "Введите номер поезда"
+    puts OUTPUTS[:train_number]
     user_train_number = gets.chomp.to_i
 
-    user_trains.find do |train|
-      if train.number == user_train_number
-        train.move_next_station
-        puts "Поезд прибыл на станцию #{train.current_station.name}"
-      end
-    end
+    choosed_train = choose_train(user_trains, user_train_number)
+    choosed_train.move_next_station
+    puts OUTPUTS[:train_has_arrived] + choosed_train.current_station.name unless choosed_train.nil?
   end
 
   def train_move_backward
-    puts "Список поездов:"
+    puts OUTPUTS[:available_trains]
     puts trains_list
-    puts "Введите номер поезда"
+    puts OUTPUTS[:train_number]
     user_train_number = gets.chomp.to_i
 
-    user_trains.find do |train|
-      if train.number == user_train_number
-        train.move_previous_station
-        puts "Поезд прибыл на станцию #{train.current_station.name}"
-      end
-    end
+    choosed_train = choose_train(user_trains, user_train_number)
+    choosed_train.move_previous_station
+    puts OUTPUTS[:train_has_arrived] + choosed_train.current_station.name unless choosed_train.nil?
   end
 
   def show_stations
-    puts station_names_list
+    puts list_names(user_stations)
   end
 
   def show_trains_on_station
     trains_on_station = []
-    puts "Список станций:"
-    puts station_names_list
-    puts "Введите название станции"
+    puts OUTPUTS[:stations_list]
+    puts list_names(user_stations)
+    puts OUTPUTS[:type_station_name]
     user_station_name = gets.chomp
 
-    user_stations.each do |station|
-      if station.name == user_station_name
-        station.trains.each do |train|
-          trains_on_station << "Поезд № #{train.number}"
-        end
-      end
-    end
+    choosed_station = choose_station(user_stations, user_station_name)
 
-    puts trains_on_station.join(', ')
+    unless choosed_station.nil?
+      choosed_station.trains.each do |train|
+        trains_on_station << "Поезд № #{train.number}"
+      end
+      puts trains_on_station.join(', ')
+    end
   end
 
   private
 
-  def station_names_list
-    st_list = []
-    user_stations.each do |station|
-      st_list << station.name
-    end
-
-    st_list.join(', ')
+  def choose_station(arr, compared_to)
+    arr.find { |station| station.name == compared_to }
   end
 
-  def routes_list
-    rt_list = []
-    user_routes.each do |route|
-      rt_list << route.name
+  def choose_train(arr, compared_to)
+    arr.find { |train| train.number == compared_to }
+  end
+
+  def list_names(arr)
+    list = []
+
+    arr.each do |elem|
+      list << elem.name
     end
 
-    rt_list.join(', ')
+    list.join(', ')
   end
 
   def trains_list
-    tr_list = []
+    list = []
 
     user_trains.each do |train|
-      tr_list << "Поезд № #{train.number}"
+      list << "Поезд № #{train.number}"
     end
 
-    tr_list.join(', ')
+    list.join(', ')
   end
 end

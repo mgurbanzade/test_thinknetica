@@ -8,11 +8,11 @@ class Train
   end
 
   def accelerate(amount)
-    speed += amount if amount > 0
+    self.speed += amount if amount > 0
   end
 
   def decelerate(amount)
-    speed -= amount if amount <= speed && amount > 0
+    self.speed -= amount if amount <= speed && amount > 0
   end
 
   def attach_wagon(wagon)

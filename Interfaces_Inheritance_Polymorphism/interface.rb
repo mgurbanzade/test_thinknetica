@@ -1,20 +1,9 @@
 require_relative 'main'
+require_relative 'outputs'
 
 class Interface
+
   def initialize
-    @create_station = "создать станцию"
-    @create_train = "создать поезд"
-    @create_route = "создать маршрут"
-    @add_station = "добавить станцию в маршрут"
-    @remove_station = "удалить станцию из маршрута"
-    @set_route = "назначить маршрут поезду"
-    @attach_wagon = "добавить вагон"
-    @detach_wagon = "отцепить вагон"
-    @move_forward = "двигаться вперед по маршруту"
-    @move_backward = "двигаться назад по маршруту"
-    @show_stations_list = "показать список станций"
-    @show_trains_on_station = "показать список поездов на станции"
-    @exit = "выход"
     @main = Main.new
     run_interface
   end
@@ -22,48 +11,38 @@ class Interface
   def run_interface
     loop do
       puts "-----------------------"
-      puts "Введите название действия:"
+      puts MENU[:type_action_name]
       show_methods
-      @user_action = gets.chomp
+      user_action = gets.chomp
 
-      if @user_action == @create_station
-        system('clear')
+      system('clear')
+
+      case user_action
+      when MENU[:create_station]
         @main.create_station
-      elsif @user_action == @create_train
-        system('clear')
+      when MENU[:create_train]
         @main.create_train
-      elsif @user_action == @create_route
-        system('clear')
+      when MENU[:create_route]
         @main.create_route
-      elsif @user_action == @add_station
-        system('clear')
+      when MENU[:add_station]
         @main.route_add_station
-      elsif @user_action == @remove_station
-        system('clear')
+      when MENU[:remove_station]
         @main.route_remove_station
-      elsif @user_action == @set_route
-        system('clear')
+      when MENU[:set_route]
         @main.train_set_route
-      elsif @user_action == @attach_wagon
-        system('clear')
+      when MENU[:attach_wagon]
         @main.train_attach_wagon
-      elsif @user_action == @detach_wagon
-        system('clear')
+      when MENU[:detach_wagon]
         @main.train_detach_wagon
-      elsif @user_action == @move_forward
-        system('clear')
+      when MENU[:move_forward]
         @main.train_move_forward
-      elsif @user_action == @move_backward
-        system('clear')
+      when MENU[:move_backward]
         @main.train_move_backward
-      elsif @user_action == @show_stations_list
-        system('clear')
+      when MENU[:show_stations_list]
         @main.show_stations
-      elsif @user_action == @show_trains_on_station
-        system('clear')
+      when MENU[:show_trains_on_station]
         @main.show_trains_on_station
-      elsif @user_action == @exit
-        system('clear')
+      when MENU[:exit]
         break
       end
     end
@@ -82,8 +61,8 @@ class Interface
       end
     end
 
-    puts "-- #{@move_forward}" if forward_status
-    puts "-- #{@move_backward}" if backward_status
+    puts "-- #{MENU[:move_forward]}" if forward_status
+    puts "-- #{MENU[:move_backward]}" if backward_status
   end
 
   def station_trains
@@ -93,34 +72,38 @@ class Interface
       stations_status = true if station.trains.size >= 1
     end
 
-    puts "-- #{@show_trains_on_station}" if stations_status
+    puts "-- #{MENU[:show_trains_on_station]}" if stations_status
   end
 
   def route_remove_station
     @main.user_routes.find do |route|
-      puts "-- #{@remove_station}" if route.stations.size > 2
+      puts "-- #{MENU[:remove_station]}" if route.stations.size > 2
     end
   end
 
   def detach_wagon
+    wagon_status = false
+
     @main.user_trains.find do |train|
-      puts "-- #{@detach_wagon}" if train.wagons.size > 0 && @main.user_trains.size >= 1
+      wagon_status = true if train.wagons.size > 0 && @main.user_trains.size >= 1
     end
+
+    puts "-- #{MENU[:detach_wagon]}" if wagon_status
   end
 
   def show_methods
-    puts "-- #{@create_station}"
-    puts "-- #{@create_train}"
-    puts "-- #{@create_route}" if @main.user_stations.size >= 2
-    puts "-- #{@add_station}" if @main.user_routes.size >= 1 && @main.user_stations.size > 2
+    puts "-- #{MENU[:create_station]}"
+    puts "-- #{MENU[:create_train]}"
+    puts "-- #{MENU[:create_route]}" if @main.user_stations.size >= 2
+    puts "-- #{MENU[:add_station]}" if @main.user_routes.size >= 1 && @main.user_stations.size > 2
     route_remove_station
-    puts "-- #{@set_route}" if @main.user_trains.size >= 1 && @main.user_routes.size >= 1
-    puts "-- #{@attach_wagon}" if @main.user_trains.size >= 1
+    puts "-- #{MENU[:set_route]}" if @main.user_trains.size >= 1 && @main.user_routes.size >= 1
+    puts "-- #{MENU[:attach_wagon]}" if @main.user_trains.size >= 1
     detach_wagon
     train_move
-    puts "-- #{@show_stations_list}" if @main.user_stations.size >= 1
+    puts "-- #{MENU[:show_stations_list]}" if @main.user_stations.size >= 1
     station_trains
-    puts "-- #{@exit}"
+    puts "-- #{MENU[:exit]}"
   end
 end
 
