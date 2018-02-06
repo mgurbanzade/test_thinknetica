@@ -1,15 +1,18 @@
 require_relative 'manufacturer'
 require_relative 'instance_counter'
+require_relative 'outputs'
+require_relative 'validation'
 
 class Train
-  attr_reader :type, :number, :wagons, :speed, :route
   include Manufacturer
+  include InstanceCounter
+  include Validation
 
   TRAIN_NUMBER_FORMAT = /^[а-я0-9]{3}-?[а-я0-9]{2}$/i
 
-  @@trains = {}
+  attr_reader :type, :number, :wagons, :speed, :route
 
-  include InstanceCounter
+  @@trains = {}
 
   def self.find(number)
     @@trains[number]
@@ -81,7 +84,9 @@ class Train
   protected
 
   def validate!
-    raise RuntimeError unless number =~ TRAIN_NUMBER_FORMAT
+    raise EX_MESSAGES[:type_number] if number.empty?
+    raise EX_MESSAGES[:wrong_format] unless number =~ TRAIN_NUMBER_FORMAT
+    raise EX_MESSAGES[:train_exists] unless self.class.find(number).nil?
     true
   end
 end

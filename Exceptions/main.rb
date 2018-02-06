@@ -21,8 +21,8 @@ class Main
     u_station_name = gets.chomp
     user_stations << Station.new(u_station_name)
     puts OUTPUTS[:station_created] + u_station_name
-  rescue
-    puts OUTPUTS[:wrong_format]
+  rescue RuntimeError => e
+    puts e.message
     retry
   end
 
@@ -35,11 +35,6 @@ class Main
     puts OUTPUTS[:train_number]
     user_train_number = gets.chomp
 
-    if user_trains.size >= 1
-      choosed_train = choose_train(user_trains, user_train_number)
-      return puts OUTPUTS[:train_exists] unless choosed_train.nil?
-    end
-
     if user_train_type == PERMITTED_TYPES[1]
       user_trains << PassengerTrain.new(user_train_number)
       puts OUTPUTS[:pass_train_created]
@@ -49,8 +44,8 @@ class Main
       puts OUTPUTS[:cargo_train_created]
     end
 
-  rescue
-    puts OUTPUTS[:wrong_format]
+  rescue RuntimeError => e
+    puts e.message
     retry
   end
 
@@ -72,8 +67,8 @@ class Main
 
     user_routes << Route.new(user_first_station, user_last_station)
     puts OUTPUTS[:route_created]
-  rescue
-    puts OUTPUTS[:wrong_format]
+  rescue RuntimeError => e
+    puts e.message
     retry
   end
 

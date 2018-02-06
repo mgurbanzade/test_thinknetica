@@ -5,6 +5,8 @@ class Wagon
   include Manufacturer
   include InstanceCounter
 
+  attr_reader :type
+
   def initialize
     register_instance
   end

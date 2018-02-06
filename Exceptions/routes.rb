@@ -1,9 +1,11 @@
 require_relative 'instance_counter'
+require_relative 'validation'
 
 class Route
-  attr_reader :stations, :name
-
   include InstanceCounter
+  include Validation
+
+  attr_reader :stations, :name
 
   def initialize(first, last)
     @stations = [first, last]
@@ -23,7 +25,7 @@ class Route
   private
 
   def validate!
-    raise RuntimeError unless stations != nil
+    raise EX_MESSAGES[:route_stations] if stations.first.empty? || stations.last.empty?
     true
   end
 end

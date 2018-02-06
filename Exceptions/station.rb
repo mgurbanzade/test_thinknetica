@@ -1,13 +1,15 @@
 require_relative 'instance_counter'
+require_relative 'validation'
 
 class Station
-  attr_reader :trains, :name
+  include InstanceCounter
+  include Validation
 
   NAME_FORMAT = /[а-яА-Я]/
 
-  @@stations = []
+  attr_reader :trains, :name
 
-  include InstanceCounter
+  @@stations = []
 
   def self.all
     @@stations
@@ -36,7 +38,8 @@ class Station
   protected
 
   def validate!
-    raise RuntimeError unless name =~ NAME_FORMAT
+    raise EX_MESSAGES[:type_station_name] if name.empty?
+    raise EX_MESSAGES[:wrong_format] unless name =~ NAME_FORMAT
     true
   end
 end
