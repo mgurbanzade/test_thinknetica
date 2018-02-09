@@ -81,7 +81,7 @@ class Train
     route.stations[@station_index + 1]
   end
 
-  def wagons_block(block)
+  def each_wagon(block)
     wagons.each { |wagon| block.call(wagon)}
   end
 

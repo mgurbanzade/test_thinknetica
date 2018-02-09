@@ -17,6 +17,6 @@ class Wagon
 
   def use_space(amount)
     self.used_space += amount if amount < available_space
-    self.available_space -= amount
+    self.available_space -= used_space
   end
 end

@@ -192,7 +192,7 @@ class Main
       wagon_info = ->(wagon) { puts "Вагон номер: #{wagon.number}, тип: #{wagon.type}, объем свободного пространства: #{wagon.available_space}, объем занятого пространства: #{wagon.used_space}" }
     end
 
-    choosed_train.wagons_block(wagon_info)
+    choosed_train.each_wagon(wagon_info)
   end
 
   def train_use_wagon_space
