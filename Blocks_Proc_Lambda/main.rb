@@ -252,10 +252,8 @@ class Main
     choosed_station = choose_station(user_stations, user_station_name)
 
     unless choosed_station.nil?
-      choosed_station.trains.each do |train|
-        trains_on_station << "Поезд № #{train.number}, Тип: #{train.type}, Количество вагонов: #{train.wagons.size}"
-      end
-      puts trains_on_station.join(', ')
+      train_info = Proc.new { |train| puts "Поезд № #{train.number}, Тип: #{train.type}, Количество вагонов: #{train.wagons.size}" }
+      choosed_station.each_train(train_info)
     end
   end
 
