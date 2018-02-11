@@ -26,6 +26,17 @@ class Main
 
   private
 
+  def show_train_info(x)
+    puts "Поезд № #{x.number}, Тип: #{x.type}, Вагоны: #{x.wagons.size}"
+  end
+
+  def show_wagon_info(x)
+    puts "Вагон номер: #{x.number},
+          тип: #{x.type},
+          свободные места: #{x.available_space},
+          занятые места: #{x.used_space}"
+  end
+
   def choose_station(arr, compared_to)
     arr.find { |station| station.name == compared_to }
   end

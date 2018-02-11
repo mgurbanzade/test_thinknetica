@@ -13,16 +13,16 @@ module InitializeMethods
     puts OUTPUTS[:train_type]
     user_train_type = gets.chomp.downcase
 
-    return puts OUTPUTS[:no_type] unless PERMITTED_TYPES.include?(user_train_type)
+    return puts OUTPUTS[:no_type] unless TYPES.include?(user_train_type)
 
     puts OUTPUTS[:train_number]
     user_train_number = gets.chomp
 
-    if user_train_type == PERMITTED_TYPES[1]
+    if user_train_type == TYPES[1]
       user_trains << PassengerTrain.new(user_train_number)
       puts OUTPUTS[:pass_train_created]
 
-    elsif user_train_type == PERMITTED_TYPES[0]
+    elsif user_train_type == TYPES[0]
       user_trains << CargoTrain.new(user_train_number)
       puts OUTPUTS[:cargo_train_created]
     end

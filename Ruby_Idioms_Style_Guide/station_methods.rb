@@ -10,7 +10,7 @@ module StationMethods
     user_station_name = gets.chomp
 
     choosed_station = choose_station(user_stations, user_station_name)
-    train_info = proc { |train| puts "Поезд № #{train.number}, Тип: #{train.type}, Количество вагонов: #{train.wagons.size}" }
+    train_info = ->(train) { show_train_info(train) }
     choosed_station.each_train(train_info) unless choosed_station.nil?
   end
 end

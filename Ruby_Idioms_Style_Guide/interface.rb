@@ -99,20 +99,44 @@ class Interface
     puts "-- #{MENU[output]}" unless train_wagons.nil?
   end
 
-  def show_methods
+  def menu_create
     puts "-- #{MENU[:create_station]}"
     puts "-- #{MENU[:create_train]}"
     puts "-- #{MENU[:create_route]}" if @main.user_stations.size >= 2
-    puts "-- #{MENU[:add_station]}" if @main.user_routes.size >= 1 && @main.user_stations.size > 2
+  end
+
+  def menu_route
+    puts "-- #{MENU[:add_station]}" if can_add_stations?
     route_remove_station
-    puts "-- #{MENU[:set_route]}" if @main.user_trains.size >= 1 && @main.user_routes.size >= 1
+  end
+
+  def menu_train
+    puts "-- #{MENU[:set_route]}" if can_set_route?
     puts "-- #{MENU[:attach_wagon]}" if @main.user_trains.size >= 1
     detach_wagon
     wagons_manipulation(:show_wagons_list)
     wagons_manipulation(:use_wagon_space)
     train_move
+  end
+
+  def menu_stations
     puts "-- #{MENU[:show_stations_list]}" if @main.user_stations.size >= 1
     station_trains
+  end
+
+  def can_set_route?
+    @main.user_trains.size >= 1 && @main.user_routes.size >= 1
+  end
+
+
+  def can_add_stations?
+    @main.user_routes.size >= 1 && @main.user_stations.size > 2
+  end
+
+  def show_methods
+    menu_create
+    menu_route
+    menu_train
     puts "-- #{MENU[:exit]}"
   end
 end

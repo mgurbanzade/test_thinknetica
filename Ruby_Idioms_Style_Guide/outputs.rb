@@ -1,4 +1,4 @@
-PERMITTED_TYPES = %w[грузовой пассажирский].freeze
+TYPES = %w[грузовой пассажирский].freeze
 
 OUTPUTS = {
   station_name: 'Придумайте название для станции:',

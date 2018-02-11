@@ -64,11 +64,7 @@ module TrainMethods
     user_train_number = gets.chomp
     choosed_train = choose_train(user_trains, user_train_number)
 
-    if choosed_train.type == :passenger
-      wagon_info = ->(wagon) { puts "Вагон номер: #{wagon.number}, тип: #{wagon.type}, кол-во свободных мест: #{wagon.available_space}, кол-во занятых мест: #{wagon.used_space}" }
-    elsif choosed_train.type == :cargo
-      wagon_info = ->(wagon) { puts "Вагон номер: #{wagon.number}, тип: #{wagon.type}, объем свободного пространства: #{wagon.available_space}, объем занятого пространства: #{wagon.used_space}" }
-    end
+    wagon_info = ->(wagon) { show_wagon_info(wagon) }
 
     choosed_train.each_wagon(wagon_info)
   end
