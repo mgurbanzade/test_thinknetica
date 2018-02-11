@@ -25,7 +25,8 @@ class Route
   private
 
   def validate!
-    raise EX_MESSAGES[:route_stations] if stations == ['', ''] || stations == ['/[а-яА-Я]/', ''] || stations == ['', '/[а-яА-Я]/']
+    has_stations = stations.find { |station| !station.empty? }
+    raise EX_MESSAGES[:route_stations] if has_stations.nil?
     true
   end
 end

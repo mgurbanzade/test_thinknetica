@@ -7,7 +7,6 @@ require_relative 'routes'
 require_relative 'outputs'
 
 class Main
-
   attr_accessor :user_stations, :user_trains, :user_routes
 
   def initialize
@@ -43,7 +42,6 @@ class Main
       user_trains << CargoTrain.new(user_train_number)
       puts OUTPUTS[:cargo_train_created]
     end
-
   rescue RuntimeError => e
     puts e.message
     retry
@@ -79,20 +77,19 @@ class Main
     user_route_name = gets.chomp
 
     user_routes.find do |route|
-      if route.name == user_route_name
-        puts OUTPUTS[:available_stations]
+      next unless route.name == user_route_name
+      puts OUTPUTS[:available_stations]
 
-        user_stations.find do |station|
-          puts station.name if !route.stations.include?(station)
-        end
-
-        puts OUTPUTS[:type_station_name]
-        user_add_station_route = gets.chomp
-
-        available_station = choose_station(user_stations, user_add_station_route)
-        route.add_station(available_station) unless available_station.nil?
-        puts OUTPUTS[:station_added]
+      user_stations.find do |station|
+        puts station.name unless route.stations.include?(station)
       end
+
+      puts OUTPUTS[:type_station_name]
+      user_add_station_route = gets.chomp
+
+      available_station = choose_station(user_stations, user_add_station_route)
+      route.add_station(available_station) unless available_station.nil?
+      puts OUTPUTS[:station_added]
     end
   end
 
@@ -103,20 +100,19 @@ class Main
     user_route_name = gets.chomp
 
     user_routes.find do |route|
-      if route.name == user_route_name
-        puts OUTPUTS[:removable_stations]
+      next unless route.name == user_route_name
+      puts OUTPUTS[:removable_stations]
 
-        route.stations.find do |station|
-          puts station.name if station != route.stations.first && station != route.stations.last
-        end
-
-        puts OUTPUTS[:type_station_name]
-        user_remove_station_route = gets.chomp
-
-        removable_station = choose_station(user_stations, user_remove_station_route)
-        puts OUTPUTS[:station_deleted]
-        route.remove_station(removable_station)
+      route.stations.find do |station|
+        puts station.name if station != route.stations.first && station != route.stations.last
       end
+
+      puts OUTPUTS[:type_station_name]
+      user_remove_station_route = gets.chomp
+
+      removable_station = choose_station(user_stations, user_remove_station_route)
+      puts OUTPUTS[:station_deleted]
+      route.remove_station(removable_station)
     end
   end
 
@@ -128,22 +124,21 @@ class Main
     user_route_name = gets.chomp
 
     user_routes.find do |route|
-      if route.name == user_route_name
-        puts OUTPUTS[:available_trains]
+      next unless route.name == user_route_name
+      puts OUTPUTS[:available_trains]
 
-        user_trains.each do |train|
-          available_trains << "Поезд № #{train.number}" if train.route.nil?
-        end
-
-        puts available_trains.join(', ')
-
-        puts OUTPUTS[:train_number]
-        user_train_number = gets.chomp
-
-        choosed_train = choose_train(user_trains, user_train_number)
-        choosed_train.set_route(route)
-        puts OUTPUTS[:route_assigned]
+      user_trains.each do |train|
+        available_trains << "Поезд № #{train.number}" if train.route.nil?
       end
+
+      puts available_trains.join(', ')
+
+      puts OUTPUTS[:train_number]
+      user_train_number = gets.chomp
+
+      choosed_train = choose_train(user_trains, user_train_number)
+      choosed_train.set_route(route)
+      puts OUTPUTS[:route_assigned]
     end
   end
 
@@ -252,7 +247,7 @@ class Main
     choosed_station = choose_station(user_stations, user_station_name)
 
     unless choosed_station.nil?
-      train_info = Proc.new { |train| puts "Поезд № #{train.number}, Тип: #{train.type}, Количество вагонов: #{train.wagons.size}" }
+      train_info = proc { |train| puts "Поезд № #{train.number}, Тип: #{train.type}, Количество вагонов: #{train.wagons.size}" }
       choosed_station.each_train(train_info)
     end
   end

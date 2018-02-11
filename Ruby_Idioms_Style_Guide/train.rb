@@ -36,14 +36,14 @@ class Train
   end
 
   def attach_wagon(wagon)
-    wagons << wagon if speed == 0 && wagon.type == type
+    wagons << wagon if speed.zero? && wagon.type == type
   end
 
   def detach_wagon
-    wagons.pop if speed == 0 && wagons.count > 0
+    wagons.pop if speed.zero? && wagons.count > 0
   end
 
-  def set_route(route)
+  def assign_route(route)
     @route = route
     @station_index = 0
     current_station.train_arrival(self)

@@ -117,4 +117,4 @@ class Interface
   end
 end
 
-interface = Interface.new
+Interface.new
