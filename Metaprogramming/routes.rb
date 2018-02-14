@@ -1,11 +1,19 @@
 require_relative 'instance_counter'
+require_relative 'outputs'
 require_relative 'validation'
+require_relative 'accessors'
 
 class Route
   include InstanceCounter
   include Validation
+  include Accessors
 
   attr_reader :stations, :name
+
+  attr_accessor_with_history :route_length
+  strong_attr_accessor :route_station, String
+
+  validate :name, :type, String
 
   def initialize(first, last)
     @stations = [first, last]
@@ -20,13 +28,5 @@ class Route
 
   def remove_station(station)
     stations.delete(station)
-  end
-
-  private
-
-  def validate!
-    has_stations = stations.find { |station| !station.empty? }
-    raise EX_MESSAGES[:route_stations] if has_stations.nil?
-    true
   end
 end

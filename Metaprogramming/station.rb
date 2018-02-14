@@ -1,13 +1,24 @@
 require_relative 'instance_counter'
+require_relative 'outputs'
 require_relative 'validation'
+require_relative 'accessors'
 
 class Station
   include InstanceCounter
   include Validation
+  include Accessors
 
   NAME_FORMAT = /[а-яА-Я]/
 
   attr_reader :trains, :name
+
+  attr_accessor_with_history :station_area
+  strong_attr_accessor :station_name, String
+
+  validate :name, :type, String
+  validate :name, :presence
+  validate :name, :format, NAME_FORMAT
+
 
   @@stations = []
 
@@ -41,13 +52,5 @@ class Station
 
   def empty?
     false
-  end
-
-  protected
-
-  def validate!
-    raise EX_MESSAGES[:type_station_name] if name.empty?
-    raise EX_MESSAGES[:wrong_format] unless name =~ NAME_FORMAT
-    true
   end
 end
